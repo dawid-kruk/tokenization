@@ -1,0 +1,28 @@
+{
+  "name": "inner_wallet",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@cosmjs/crypto": "^0.29.5",
+    "@cosmjs/proto-signing": "^0.29.5",
+    "@cosmjs/stargate": "^0.29.5",
+    "browserify": "^17.0.0",
+    "buffer": "^6.0.3",
+    "buffer-browserify": "^0.2.5",
+    "crypto-js": "^4.1.1",
+    "secret-sharing.js": "^1.3.1",
+    "shamirs-secret-sharing": "^1.0.1",
+    "vue": "^3.2.45",
+    "vue-cryptojs": "^2.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.0.0",
+    "vite": "^4.0.0"
+  }
+}
