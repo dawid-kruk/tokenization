@@ -1,5 +1,5 @@
 {
-  "name": "inner_wallet",
+  "name": "split_vesting_page",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -12,6 +12,7 @@
     "@cosmjs/crypto": "^0.29.5",
     "@cosmjs/proto-signing": "^0.29.5",
     "@cosmjs/stargate": "^0.29.5",
+    "@keplr-wallet/types": "^0.11.56",
     "browserify": "^17.0.0",
     "buffer": "^6.0.3",
     "buffer-browserify": "^0.2.5",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.0.0",
+    "sass": "^1.62.0",
     "vite": "^4.0.0"
   }
 }

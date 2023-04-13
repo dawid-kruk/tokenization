@@ -1,9 +1,9 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
+import SplitVesting from './components/SplitVesting.vue'
 </script>
 
 <template>
-  <HelloWorld />
+  <SplitVesting />
 </template>
 
 <style scoped>

@@ -1,3 +1,6 @@
+import {blockchainConfig} from "../blockchainConfig";
+import {ChainInfo} from "@keplr-wallet/types";
+
 export const hexToBytes = (hex): Uint8Array => {
     let bytes = [];
     let c = 0;
@@ -19,3 +22,45 @@ export const getFees = () => {
 }
 
 export const PRIVATE_KEY = "PRIVATE_KEY"
+
+export const createKeplrConfig = () =>  {
+    return {
+        chainId: blockchainConfig.chainId,
+        chainName: blockchainConfig.chainId,
+        rpc: blockchainConfig.rpcUrl,
+        rest: blockchainConfig.restUrl,
+        bip44: {
+            coinType: 118
+        },
+        bech32blockchainConfig: {
+            bech32PrefixAccAddr: blockchainConfig.addressPrefix,
+            bech32PrefixAccPub: blockchainConfig.addressPrefix + "pub",
+            bech32PrefixValAddr: blockchainConfig.addressPrefix + "valoper",
+            bech32PrefixValPub: blockchainConfig.addressPrefix + "valoperpub",
+            bech32PrefixConsAddr: blockchainConfig.addressPrefix + "valcons",
+            bech32PrefixConsPub: blockchainConfig.addressPrefix + "valconspub"
+        },
+        stakeCurrency: {
+            coinDenom: blockchainConfig.coinDenom,
+            coinMinimalDenom: blockchainConfig.coinMinimalDenom,
+            coinDecimals: blockchainConfig.coinDecimals
+        },
+        feeCurrencies: [
+            {
+                coinDenom: blockchainConfig.coinDenom,
+                coinMinimalDenom: blockchainConfig.coinMinimalDenom,
+                coinDecimals: blockchainConfig.coinDecimals
+            }
+        ],
+        currencies: [
+            {
+                coinDenom: blockchainConfig.coinDenom,
+                coinMinimalDenom: blockchainConfig.coinMinimalDenom,
+                coinDecimals: blockchainConfig.coinDecimals
+            }
+        ],
+        coinType: 118,
+        gasPriceStep: blockchainConfig.gasPrices,
+        walletUrlForStaking: blockchainConfig.walletUrlForStaking
+    } as ChainInfo;
+}
