@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import {ref} from 'vue'
-import {SigningStargateClient} from "@cosmjs/stargate";
+import {AminoTypes, SigningStargateClient} from "@cosmjs/stargate";
 import {coins, DirectSecp256k1HdWallet} from "@cosmjs/proto-signing";
-import {createKeplrConfig, getFees} from "./helpers";
+import {createKeplrConfig, createVestingAminoConverters, getFees} from "./helpers";
 import {MsgSplitVesting} from "../../ts-client/chain4energy.c4echain.cfevesting/types/c4echain/cfevesting/tx";
 import {registry} from "../../ts-client";
 import {blockchainConfig} from "../blockchainConfig";
 
 const mnemonic = ref("")
 const userAddress = ref("")
-const amount = ref("")
+const amount = ref("0.01")
 const confirmed = ref(false)
-const toAddress = ref("")
+const toAddress = ref("c4e1yyjfd5cj5nd0jrlvrhc5p3mnkcn8v9q8fdd9gs")
 
 const denomination = 1000000;
 
@@ -20,7 +20,7 @@ let client:SigningStargateClient
 const createEncodedMsg = (objectToEncode: any) => {
     return {
         typeUrl: "/chain4energy.c4echain.cfevesting.MsgSplitVesting",
-        value: MsgSplitVesting.fromPartial(objectToEncode),
+        value: objectToEncode,
     };
 }
 declare global { interface Window {keplr:any} }
@@ -29,29 +29,15 @@ const connectWithKeplr = async () => {
     const chainInfo = createKeplrConfig();
     await window.keplr.experimentalSuggestChain(chainInfo);
     await window.keplr.enable(chainInfo.chainId);
-    const offlineSigner = window.keplr.getOfflineSigner(chainInfo.chainId);
+    const offlineSigner = window.keplr.getOfflineSignerOnlyAmino(chainInfo.chainId);
     const accounts = await offlineSigner.getAccounts();
     userAddress.value = accounts[0].address
+    const aminoTypes = new AminoTypes(createVestingAminoConverters())
     client = await SigningStargateClient.connectWithSigner(
         blockchainConfig.rpcUrl,
         offlineSigner,
-        {registry}
+        {registry, aminoTypes}
     );
-}
-
-const retrieveKey = async() => {
-  try {
-    const wallet = await DirectSecp256k1HdWallet.fromMnemonic(mnemonic.value, {prefix: "c4e"});
-    const accounts = await wallet.getAccounts();
-    userAddress.value = accounts[0].address
-    client = await SigningStargateClient.connectWithSigner(
-        blockchainConfig.rpcUrl,
-        wallet,
-        {registry}
-    );
-  } catch (e) {
-    alert("Wrong private key!")
-  }
 }
 
 const splitVesting = async() => {

@@ -50,7 +50,7 @@ export interface MsgSendToVestingAccountResponse {
 export interface MsgSplitVesting {
   fromAddress: string;
   toAddress: string;
-  amount: Coin[];
+    amount: Coin[];
 }
 
 export interface MsgSplitVestingResponse {
