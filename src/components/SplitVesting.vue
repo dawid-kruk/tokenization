@@ -9,9 +9,9 @@ import {blockchainConfig} from "../blockchainConfig";
 
 const mnemonic = ref("")
 const userAddress = ref("")
-const amount = ref("0.01")
+const amount = ref("")
 const confirmed = ref(false)
-const toAddress = ref("c4e1yyjfd5cj5nd0jrlvrhc5p3mnkcn8v9q8fdd9gs")
+const toAddress = ref("")
 
 const denomination = 1000000;
 
