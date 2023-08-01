@@ -74,6 +74,10 @@ export const createKeplrConfig = () =>  {
 }
 import { AminoMsg } from "@cosmjs/amino";
 import {Coin} from "../../ts-client/cosmos.gov.v1/types/cosmos/base/v1beta1/coin";
+import {coins} from "@cosmjs/proto-signing";
+import {MsgBurn} from "../../ts-client/chain4energy.c4echain.cfeminter/types/c4echain/cfeminter/tx";
+import {GlobalStore} from "../services/global_store";
+import {UserStore} from "../services/user_store";
 
 export interface AminoMsgSplitVesting extends AminoMsg {
     readonly type: "cfevesting/SplitVesting";
@@ -111,3 +115,33 @@ export function createVestingAminoConverters(): AminoConverters {
         },
     };
 }
+
+export async function confirmTransaction(msg:any) {
+    if (confirm("Confirm transaction")) {
+        GlobalStore.switchLoader()
+        try {
+            const res =  await UserStore.client.signAndBroadcast(UserStore.userAddress, [createEncodedMsg(msg)], getFees())
+            console.log(res)
+            GlobalStore.switchLoader()
+            if (res.code === 0) {
+              alert("Transaction successful!")
+            } else {
+              console.log(res.rawLog)
+              alert("Transaction error! Raw error log:" + res.rawLog)
+            }
+        } catch (e) {
+            GlobalStore.switchLoader()
+            console.log(e.toString())
+            alert("Error: " + e.toString())
+        }
+
+    }
+}
+
+const createEncodedMsg = (objectToEncode: any) => {
+    return {
+        typeUrl: "/cosmos.vesting.v1beta1.MsgCreatePeriodicVestingAccount",
+        value: objectToEncode,
+    };
+}
+declare global { interface Window {keplr:any} }
