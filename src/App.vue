@@ -1,9 +1,8 @@
 <script setup>
-import SplitVesting from './components/SplitVesting.vue'
 </script>
 
 <template>
-  <SplitVesting />
+  <router-view />
 </template>
 
 <style scoped>

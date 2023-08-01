@@ -19,7 +19,7 @@ export function bytesToHex(byteArray) {
 }
 
 export const getFees = () => {
-    const convertedFee = [{amount: String(1000000), denom: "uc4e"}];
+    const convertedFee = [{amount: String(0), denom: "uc4e"}];
     return {gas: String(1000000), amount: convertedFee};
 }
 
@@ -34,7 +34,7 @@ export const createKeplrConfig = () =>  {
         bip44: {
             coinType: 118
         },
-        bech32blockchainConfig: {
+        bech32Config: {
             bech32PrefixAccAddr: blockchainConfig.addressPrefix,
             bech32PrefixAccPub: blockchainConfig.addressPrefix + "pub",
             bech32PrefixValAddr: blockchainConfig.addressPrefix + "valoper",
@@ -45,13 +45,20 @@ export const createKeplrConfig = () =>  {
         stakeCurrency: {
             coinDenom: blockchainConfig.coinDenom,
             coinMinimalDenom: blockchainConfig.coinMinimalDenom,
-            coinDecimals: blockchainConfig.coinDecimals
+            coinDecimals: blockchainConfig.coinDecimals,
+            gasPriceStep: { low: 0, avergage: 0.025, high: 0.04 }
         },
         feeCurrencies: [
             {
                 coinDenom: blockchainConfig.coinDenom,
                 coinMinimalDenom: blockchainConfig.coinMinimalDenom,
-                coinDecimals: blockchainConfig.coinDecimals
+                coinGeckoId: "c4e",
+                coinDecimals: blockchainConfig.coinDecimals,
+                gasPriceStep: {
+                    low: 0,
+                    average: 0.025,
+                    high: 0.04,
+                },
             }
         ],
         currencies: [
@@ -62,7 +69,6 @@ export const createKeplrConfig = () =>  {
             }
         ],
         coinType: 118,
-        gasPriceStep: blockchainConfig.gasPrices,
         walletUrlForStaking: blockchainConfig.walletUrlForStaking
     } as unknown as ChainInfo;
 }
