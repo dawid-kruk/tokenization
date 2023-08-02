@@ -41,7 +41,7 @@ const connectWithKeplr = async () => {
       </div>
     </div>
     <div v-if="!userAddress">
-      <h2>To split vesting connect with keplr first</h2>
+      <h2>Connect with keplr first</h2>
       <button @click="connectWithKeplr()">Connect with keplr</button>
     </div>
     <router-view v-if="userAddress"></router-view>
@@ -70,12 +70,13 @@ const connectWithKeplr = async () => {
   gap: 15px;
 
   a {
+    transition: all ease 0.3s;
     color: black !important;
     text-decoration: none;
     font-weight: bold;
   }
   a:hover {
-    font-size: 15px;
+    font-size: 18px;
   }
 }
 

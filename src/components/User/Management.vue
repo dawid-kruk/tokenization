@@ -2,7 +2,6 @@
 import { UserStore } from "../../services/user_store";
 import { ref, onMounted } from "vue";
 import {Device} from "../../../ts-client/chain4energy.c4echain.cfetokenization";
-import { useRouter} from "vue-router";
 import {router} from '../../router'
 
 const devices = ref([]);

@@ -16,9 +16,5 @@ const owner = ref("");
 const certificateId = ref(0);
 const price = ref([]); // you can further customize this field
 
-const addCertificateToMarketplace = async () => {
-  const msgAddCertificateToMarketplace = {owner: owner.value, certificateId: certificateId.value, price: price.value};
-  const x = txClient().msgAddCertificateToMarketplace({value: msgAddCertificateToMarketplace});
-  await confirmTransaction(x);
-}
+
 </script>

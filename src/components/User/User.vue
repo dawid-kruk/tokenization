@@ -20,12 +20,13 @@
     gap: 15px;
     margin-bottom: 10px;
     a {
+      transition: all ease 0.3s;
       color: black !important;
       text-decoration: none;
       font-weight: bold;
     }
     a:hover {
-      font-size: 15px;
+      font-size: 18px;
     }
   }
 </style>

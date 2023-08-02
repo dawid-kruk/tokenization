@@ -46,7 +46,7 @@ const createUserCertificates = async () => {
     return
   }
   const msgCreateUserCertificates = {
-  owner: UserStore.userAddress,
+    owner: UserStore.userAddress,
     deviceAddress: UserStore.device.deviceAddress,
     power: power.value,
     allowedAuthorities: allowedAuthorities.value,
