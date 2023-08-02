@@ -4,8 +4,8 @@ export const blockchainConfig = {
   coinDecimals: 6,
   chainId: "c4echain",
   addressPrefix: "c4e",
-  rpcUrl: "localhost:26657",
-  restUrl: "https://lcd-dev.c4e.io/",
+  rpcUrl: "http://localhost:26657",
+  restUrl: "http://localhost:1317",
   gasPrices: {
     average: 0.025,
     high: 0.03,

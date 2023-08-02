@@ -1,7 +1,7 @@
 import {reactive, ref} from "vue";
 import {SigningStargateClient} from "@cosmjs/stargate";
 
-export  const UserStore = reactive({
+export const UserStore = {
     userAddress:"",
     client : {} as SigningStargateClient,
 
@@ -10,5 +10,8 @@ export  const UserStore = reactive({
     },
     setUserClient(client:SigningStargateClient) {
         this.client = client
+    },
+    getUserClient() {
+        return this.client
     }
-})
+}

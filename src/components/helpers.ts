@@ -23,8 +23,6 @@ export const getFees = () => {
     return {gas: String(1000000), amount: convertedFee};
 }
 
-export const PRIVATE_KEY = "PRIVATE_KEY"
-
 export const createKeplrConfig = () =>  {
     return {
         chainId: blockchainConfig.chainId,
@@ -68,59 +66,19 @@ export const createKeplrConfig = () =>  {
                 coinDecimals: blockchainConfig.coinDecimals
             }
         ],
-        coinType: 118,
         walletUrlForStaking: blockchainConfig.walletUrlForStaking
     } as unknown as ChainInfo;
 }
-import { AminoMsg } from "@cosmjs/amino";
-import {Coin} from "../../ts-client/cosmos.gov.v1/types/cosmos/base/v1beta1/coin";
-import {coins} from "@cosmjs/proto-signing";
-import {MsgBurn} from "../../ts-client/chain4energy.c4echain.cfeminter/types/c4echain/cfeminter/tx";
+
 import {GlobalStore} from "../services/global_store";
 import {UserStore} from "../services/user_store";
 
-export interface AminoMsgSplitVesting extends AminoMsg {
-    readonly type: "cfevesting/SplitVesting";
-    readonly value: {
-        /** Bech32 account address */
-        readonly from_address: string;
-        /** Bech32 account address */
-        readonly to_address: string;
-        readonly amount: readonly Coin[];
-    };
-}
-
-export function createVestingAminoConverters(): AminoConverters {
-    return {
-        "/chain4energy.c4echain.cfevesting.MsgSplitVesting": {
-            aminoType: "cfevesting/SplitVesting",
-            toAmino: ({
-                          fromAddress,
-                          toAddress,
-                          amount,
-                      }: MsgSplitVesting): AminoMsgSplitVesting["value"] => ({
-                from_address: fromAddress,
-                to_address: toAddress,
-                amount: [...amount],
-            }),
-            fromAmino: ({
-                            from_address,
-                            to_address,
-                            amount,
-                        }: AminoMsgSplitVesting["value"]): MsgSplitVesting => ({
-                fromAddress: from_address,
-                toAddress: to_address,
-                amount: [...amount],
-            }),
-        },
-    };
-}
-
 export async function confirmTransaction(msg:any) {
-    if (confirm("Confirm transaction")) {
         GlobalStore.switchLoader()
         try {
-            const res =  await UserStore.client.signAndBroadcast(UserStore.userAddress, [createEncodedMsg(msg)], getFees())
+            console.log(msg)
+            console.log(UserStore.getUserClient())
+            const res = await  UserStore.getUserClient().signAndBroadcast(UserStore.userAddress, [msg], getFees())
             console.log(res)
             GlobalStore.switchLoader()
             if (res.code === 0) {
@@ -130,17 +88,16 @@ export async function confirmTransaction(msg:any) {
               alert("Transaction error! Raw error log:" + res.rawLog)
             }
         } catch (e) {
+            console.log(e)
             GlobalStore.switchLoader()
             console.log(e.toString())
             alert("Error: " + e.toString())
         }
-
-    }
 }
 
-const createEncodedMsg = (objectToEncode: any) => {
+export const createEncodedMsg = (objectToEncode: any, typeUrl:string) => {
     return {
-        typeUrl: "/cosmos.vesting.v1beta1.MsgCreatePeriodicVestingAccount",
+        typeUrl: typeUrl,
         value: objectToEncode,
     };
 }

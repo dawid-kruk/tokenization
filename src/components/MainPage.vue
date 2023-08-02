@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import {ref} from 'vue'
-import {AminoTypes, SigningStargateClient} from "@cosmjs/stargate";
-import {createKeplrConfig, createVestingAminoConverters} from "./helpers";
+import { SigningStargateClient} from "@cosmjs/stargate";
+import { createKeplrConfig} from "./helpers";
 import {registry} from "../../ts-client";
-import {blockchainConfig} from "../blockchainConfig";
 import {UserStore} from "../services/user_store";
 import {GlobalStore} from "../services/global_store";
 
@@ -13,17 +12,18 @@ const denomination = 1000000;
 
 const connectWithKeplr = async () => {
     const chainInfo = createKeplrConfig();
+    console.log(chainInfo)
     await window.keplr.experimentalSuggestChain(chainInfo);
-    await window.keplr.enable(chainInfo.chainId);
-    const offlineSigner = window.keplr.getOfflineSigner(chainInfo.chainId);
+    await window.keplr.enable("c4echain");
+    const offlineSigner = window.keplr.getOfflineSigner("c4echain");
     const accounts = await offlineSigner.getAccounts();
     userAddress.value = accounts[0].address
-    const aminoTypes = new AminoTypes(createVestingAminoConverters())
     const client = await SigningStargateClient.connectWithSigner(
-        blockchainConfig.rpcUrl,
+        "localhost:26657",
         offlineSigner,
-        {registry, aminoTypes}
+        {registry}
     );
+
     UserStore.setUserAddress(userAddress.value)
     UserStore.setUserClient(client)
 }
@@ -33,25 +33,26 @@ const connectWithKeplr = async () => {
 <template>
   <div id="wrapper">
     <div v-if="!GlobalStore.loader">
-      <div class="wrapper">
+      <div class="wrapper" style="width: 100%">
           <div v-if="userAddress">
-              <h3>User address: {{userAddress}}</h3>
+              <h3>Account address: {{userAddress}}</h3>
+            <div>
+              <h1>Connect as:</h1>
+              <router-link to="/user">User</router-link>
+              <router-link to="/device">Device</router-link>
+              <router-link to="/authority">Authority</router-link>
+            </div>
+
           </div>
         <div v-if="!userAddress" >
             <h2>To split vesting connect with keplr first</h2>
             <button @click="connectWithKeplr()">Connect with keplr</button>
-<!--            <hr style="border: 1px solid grey; width: 100%"/>-->
-<!--            <h3>Enter mnemonic:</h3>-->
-<!--            <textarea v-model="mnemonic"></textarea>-->
-<!--            <button @click="retrieveKey(); retrieved = true">Connect with mnemonic</button>-->
         </div>
 
-        <div v-if="userAddress">
-          <h1>Connect as:</h1>
-          <router-link to="/user">User</router-link>
-          <router-link to="/device">Device</router-link>
-          <router-link to="/authority">Authority</router-link>
-        </div>
+          <router-view  v-if="userAddress">
+
+          </router-view>
+
       </div>
     </div>
 
@@ -100,7 +101,7 @@ input {
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 400px;
+    width: 80%;
     background: white;
   }
 }
