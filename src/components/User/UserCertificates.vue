@@ -22,6 +22,12 @@ const addCertificateToMarketplace = async (certId:number) => {
   const x = txClient().msgAddCertificateToMarketplace({value: msgAddCertificateToMarketplace});
   await confirmTransaction(x);
 }
+
+const burnCertificate = async (certId:number) => {
+  const msgAddCertificateToMarketplace = {owner: UserStore.userAddress, certificateId: certId};
+  const x = txClient().msgBurnCertificate({value: msgAddCertificateToMarketplace});
+  await confirmTransaction(x);
+}
 </script>
 
 <template>
@@ -34,8 +40,13 @@ const addCertificateToMarketplace = async (certId:number) => {
       <h3>Used power: {{cert.power}}</h3>
       <h3 v-if="cert.authority != ''">Authority: {{cert.authority}}</h3>
       <div v-if="cert.certificate_status === 'VALID'">
-        <input class="input-field" v-model="price" type="number" placeholder="Price in C4E"/>
-        <button @click="addCertificateToMarketplace(cert.id)" >Add certificate from this device</button>
+        <div>
+          <input class="input-field" v-model="price" type="number" placeholder="Price in C4E"/>
+          <button @click="addCertificateToMarketplace(cert.id)" >Add certificate to marketplace</button>
+        </div>
+        <div>
+          <button @click="burnCertificate(cert.id)" >Burn this certificate</button>
+        </div>
       </div>
     </div>
   </div>

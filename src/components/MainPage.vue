@@ -38,6 +38,7 @@ const connectWithKeplr = async () => {
         <router-link to="/user">User</router-link>
         <router-link to="/device">Device</router-link>
         <router-link to="/authority">Authority</router-link>
+        <router-link to="/marketplace">Marketplace</router-link>
       </div>
     </div>
     <div v-if="!userAddress">

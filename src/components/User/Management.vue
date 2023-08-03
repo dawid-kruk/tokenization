@@ -22,9 +22,10 @@ onMounted(async () => {
     // Handle the error appropriately
   }
 });
-async function addCertificate(dev:Device) {
-  UserStore.setCurrentDevice(dev)
-  console.log(UserStore.device.power_sum)
+async function addCertificate(devAddress:any) {
+  UserStore.setCurrentDevice(devAddress)
+  console.log(devAddress)
+  console.log("Set current device")
   router.push('/user/add-certificate');
 }
 </script>

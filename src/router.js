@@ -7,6 +7,7 @@ import Management from "./components/User/Management.vue";
 import UserCertificates from "./components/User/UserCertificates.vue";
 import AcceptDevice from "./components/User/AcceptDevice.vue";
 import CreateUserCertificates from "./components/User/CreateUserCertificates.vue";
+import Marketplace from "./components/Marketplace.vue";
 
 export const router = createRouter({
     history: createWebHistory(),
@@ -44,6 +45,10 @@ export const router = createRouter({
                 {
                     path: 'device',
                     component: Device,
+                },
+                {
+                    path: 'marketplace',
+                    component: Marketplace,
                 }
             ]
         },

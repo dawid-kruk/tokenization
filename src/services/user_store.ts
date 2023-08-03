@@ -34,7 +34,7 @@ export const UserStore = {
         try {
             const response = await fetch(this.blockchainEndpoint + "/c4e/tokenization/v1beta1/user_certificates");
             const resJson = await response.json();
-            return resJson.device;
+            return resJson.UserCertificates;
         } catch (error) {
             console.error("Error in getAllUserCertificates:", error);
             throw error;
@@ -78,7 +78,8 @@ export const UserStore = {
         try {
             const response = await fetch(this.blockchainEndpoint + "/c4e/tokenization/v1beta1/marketplace_certificates");
             const resJson = await response.json();
-            return resJson.UserCertificates;
+            console.log(resJson)
+            return resJson.marketplace_certificates;
         } catch (error) {
             console.error("Error in getAllMarketplaceCertificates:", error);
             throw error;
