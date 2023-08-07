@@ -11,7 +11,6 @@ const denomination = 1000000;
 
 const connectWithKeplr = async () => {
     const chainInfo = createKeplrConfig();
-    console.log(chainInfo)
     await window.keplr.experimentalSuggestChain(chainInfo);
     await window.keplr.enable("c4echain");
     const offlineSigner = window.keplr.getOfflineSigner("c4echain");
@@ -30,6 +29,10 @@ const connectWithKeplr = async () => {
 </script>
 <template>
   <div id="wrapper">
+    <div v-if="!userAddress" class="keplr-div">
+      <h2>Connect with keplr first</h2>
+      <button @click="connectWithKeplr()" class="keplr-button">Connect with keplr</button>
+    </div>
     <div v-if="userAddress" class="navbar">
       <div class="account-address">
         <h3>Account address: {{userAddress}}</h3>
@@ -41,11 +44,9 @@ const connectWithKeplr = async () => {
         <router-link to="/marketplace">Marketplace</router-link>
       </div>
     </div>
-    <div v-if="!userAddress">
-      <h2>Connect with keplr first</h2>
-      <button @click="connectWithKeplr()">Connect with keplr</button>
-    </div>
-    <router-view v-if="userAddress"></router-view>
+    <router-view v-if="userAddress" class="router-view">
+
+    </router-view>
   </div>
 </template>
 
@@ -57,6 +58,7 @@ const connectWithKeplr = async () => {
 }
 
 .navbar {
+  box-shadow: 0px 0px 24px 0px rgba(66, 68, 90, 1);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -66,33 +68,24 @@ const connectWithKeplr = async () => {
   border-radius: 8px;
 }
 
-.router-links {
+.router-view {
+  box-shadow: 0px 0px 24px 0px rgba(66, 68, 90, 1);
+  margin-top: 10px;
+  border-radius: 10px;
+  background: white;
+  padding: 15px 10px;
+}
+
+.keplr-button {
+  font-size: 22px;
+}
+
+.keplr-div {
   display: flex;
-  gap: 15px;
-
-  a {
-    transition: all ease 0.3s;
-    color: black !important;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  a:hover {
-    font-size: 18px;
-  }
+  flex-direction: column;
+  align-items: center;
+  padding-top: 200px;
 }
 
-button {
-  padding: 10px 20px;
-  border: none;
-  background: #ff9800;
-  color: white;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background 0.3s;
-
-  &:hover {
-    background: #e68400;
-  }
-}
 
 </style>

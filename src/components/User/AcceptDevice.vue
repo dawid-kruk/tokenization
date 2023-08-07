@@ -1,8 +1,8 @@
 <template>
-  <div class="container">
-    <input class="input-field" v-model="deviceAddress" type="text" placeholder="Device address"/>
-    <input class="input-field" v-model="deviceName" type="text" placeholder="Device name"/>
-    <button class="action-button" @click="acceptDevice()">Accept device</button>
+  <div class="input-div">
+    <input  v-model="deviceAddress" type="text" placeholder="Device address"/>
+    <input v-model="deviceName" type="text" placeholder="Device name"/>
+    <button class="action-button" @click="acceptDevice()">Add device</button>
   </div>
 </template>
 

@@ -32,23 +32,27 @@ const burnCertificate = async (certId:number) => {
 
 <template>
   <div v-if="userCertificates.length > 0">
-    <div class="input_div" v-for="cert in userCertificates" >
+    <div class="listing-div" v-for="cert in userCertificates" >
       <h3>Id: {{cert.id}}</h3>
       <h3>Status: {{cert.certificate_status}}</h3>
       <h3>Certificate type: {{cert.certyficate_type_id}}</h3>
       <h3>Device address: {{cert.device_address}}</h3>
-      <h3>Used power: {{cert.power}}</h3>
+      <h3>Used power: {{cert.power}}Wh</h3>
       <h3 v-if="cert.authority != ''">Authority: {{cert.authority}}</h3>
       <div v-if="cert.certificate_status === 'VALID'">
-        <div>
+        <div style="text-align: center; margin-bottom: 10px">
           <input class="input-field" v-model="price" type="number" placeholder="Price in C4E"/>
-          <button @click="addCertificateToMarketplace(cert.id)" >Add certificate to marketplace</button>
+          <button @click="addCertificateToMarketplace(cert.id)">Add certificate to marketplace</button>
         </div>
-        <div>
-          <button @click="burnCertificate(cert.id)" >Burn this certificate</button>
+        <hr>
+        <div style="text-align: center; margin-bottom: 10px">
+          <button @click="burnCertificate(cert.id)">Burn this certificate</button>
         </div>
       </div>
     </div>
+  </div>
+  <div v-if="userCertificates.length === 0">
+    <h3>You don't have any certificates yet</h3>
   </div>
 </template>
 

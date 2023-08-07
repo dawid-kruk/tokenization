@@ -1,23 +1,26 @@
 <template>
-  <div class="container">
+  <div class="input-div" style="border: 2px solid black;">
     <h2>Dodaj nowy certyfikat</h2>
     <p>Max power: {{maxPower}}</p>
     <input class="input-field" v-model="power" type="number" placeholder="Power"/>
-    <div>
+    <hr>
+    <div style="text-align: center">
       <p>Allowed authorities:</p>
       <div v-for="authority in allowedAuthoritiesNumber">
         <input class="input-field" v-model="allowedAuthorities[authority-1]" type="text" placeholder="Authority address"/>
       </div>
       <button @click="allowedAuthoritiesNumber++">Add authority</button>
     </div>
-    <p>Selected certificate type: {{certyficateTypeId}}</p>
+    <hr>
+    <p>Select certificate type:</p>
     <div v-for="cert in certificateTypes" @click="selectCertificateType(cert.id)">
-      <p>
-        {{cert.id}} {{cert.name}} {{cert.description}}
+      <p v-bind:class="[certyficateTypeId === cert.id ? 'activeCertificateType' : '']" class="certType">
+        {{cert.name}} - {{cert.description}}
       </p>
     </div>
+    <hr>
     <!-- You can further customize allowedAuthorities input -->
-    <button class="action-button" @click="createUserCertificates()">Create user certificates</button>
+    <button class="action-button" @click="createUserCertificates()" style="width: 350px;">Create user certificates</button>
   </div>
 </template>
 
@@ -68,7 +71,18 @@ const createUserCertificates = async () => {
 </script>
 
 <style scoped lang="scss">
-.container {
-  border: 1px solid black
+.activeCertificateType {
+  color: green;
+}
+.certType {
+  cursor: pointer;
+
+}
+p {
+  padding: 0;
+  margin: 6px;
+}
+hr {
+  width: 500px;
 }
 </style>
