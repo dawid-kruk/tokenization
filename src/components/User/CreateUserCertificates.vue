@@ -5,11 +5,12 @@
     <input class="input-field" v-model="power" type="number" placeholder="Power"/>
     <hr>
     <div style="text-align: center">
-      <p>Allowed authorities:</p>
-      <div v-for="authority in allowedAuthoritiesNumber">
-        <input class="input-field" v-model="allowedAuthorities[authority-1]" type="text" placeholder="Authority address"/>
+      <p>Select authority:</p>
+      <div v-for="authority in allowedAuthoritiesList" @click="selectAuthority(authority.address)">
+        <p v-bind:class="[allowedAuthorities.findIndex(aut => aut === authority.address) !== -1 ? 'activeCertificateType' : '']" class="certType">
+          {{authority.name}} - {{authority.address}}
+        </p>
       </div>
-      <button @click="allowedAuthoritiesNumber++">Add authority</button>
     </div>
     <hr>
     <p>Select certificate type:</p>
@@ -35,11 +36,26 @@ const maxPower = ref(UserStore.device.power_sum - UserStore.device.used_power);
 const certyficateTypeId = ref();
 const certificateTypes = ref([]);
 
-const allowedAuthorities = ref(["c4e1lt5npfrl4fnvkxm387d8fc59x3vwugagm4vnzm"]); // you can further customize this field
-const allowedAuthoritiesNumber = ref(1); // you can further customize this field
+const allowedAuthoritiesList = ref([
+    {address: "c4e1lt5npfrl4fnvkxm387d8fc59x3vwugagm4vnzm", name: "keno"},
+    {address: "c4e1n65nctlr97na2h9sjul94ge4y95uhtxwmhn9kx", name: "tauron"},
+
+]);
+
+const allowedAuthorities = ref([]);
+
 
 function selectCertificateType(id: number) {
   certyficateTypeId.value = id
+}
+
+function selectAuthority(authorityAddress: string) {
+  const index = allowedAuthorities.value.findIndex(aut => aut === authorityAddress)
+  if (index === -1) {
+    allowedAuthorities.value.push(authorityAddress)
+  } else {
+    allowedAuthorities.value.splice(index, 1)
+  }
 }
 
 onMounted(async () => {

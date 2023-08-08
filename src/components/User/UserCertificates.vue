@@ -49,6 +49,9 @@ const burnCertificate = async (certId:number) => {
           <button @click="burnCertificate(cert.id)">Burn this certificate</button>
         </div>
       </div>
+      <div v-if="cert.certificate_status === 'ON_MARKETPLACE'">
+        <h3 style="color: red">Certificate currently on a marketplace</h3>
+      </div>
     </div>
   </div>
   <div v-if="userCertificates.length === 0">

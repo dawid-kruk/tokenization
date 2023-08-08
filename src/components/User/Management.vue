@@ -19,10 +19,17 @@ onMounted(async () => {
     // Handle the error appropriately
   }
 });
+
 async function addCertificate(device:any) {
   UserStore.setCurrentDevice(device)
   router.push('/user/add-certificate');
 }
+
+async function showMeasurements(device:any) {
+  UserStore.setCurrentDevice(device)
+  router.push('/user/show-measurements');
+}
+
 </script>
 
 <template>
@@ -31,6 +38,7 @@ async function addCertificate(device:any) {
       <h3>Device address: {{dev.device_address}}</h3>
       <h3>Power sum: {{dev.power_sum}}Wh</h3>
       <h3>Used power for energy certificates: {{dev.used_power}}Wh</h3>
+      <button @click="showMeasurements(dev)" style="background: green; margin-bottom: 10px; color: white">Show all measurements</button>
       <button @click="addCertificate(dev)">Add certificate from this device</button>
     </div>
   </div>

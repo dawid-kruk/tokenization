@@ -8,6 +8,7 @@ import UserCertificates from "./components/User/UserCertificates.vue";
 import AcceptDevice from "./components/User/AcceptDevice.vue";
 import CreateUserCertificates from "./components/User/CreateUserCertificates.vue";
 import Marketplace from "./components/Marketplace.vue";
+import Measurements from "./components/User/Measurements.vue";
 
 export const router = createRouter({
     history: createWebHistory(),
@@ -39,6 +40,10 @@ export const router = createRouter({
                         {
                             path: 'add-certificate',
                             component: CreateUserCertificates,
+                        },
+                        {
+                            path: 'show-measurements',
+                            component: Measurements,
                         },
                     ]
                 },
