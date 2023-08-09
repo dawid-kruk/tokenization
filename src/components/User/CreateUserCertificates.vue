@@ -1,7 +1,7 @@
 <template>
   <div class="input-div" style="border: 2px solid black;">
     <h2>Dodaj nowy certyfikat</h2>
-    <p>Max power: {{maxPower}}</p>
+    <p>Max power: {{maxPower}}Wh</p>
     <input class="input-field" v-model="power" type="number" placeholder="Power"/>
     <hr>
     <div style="text-align: center">
