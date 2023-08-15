@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {UserStore} from "../services/user_store.js";
 import {txClient} from "../../ts-client/chain4energy.c4echain.cfetokenization";
 import {confirmTransaction} from "./helpers";
 const userCertificates = ref([]);
+const measurementsMap = reactive({});
+const validUntillMap = reactive({});
 onMounted(async () => {
   try {
     const certs = await UserStore.getAllUserCertificates();
@@ -13,15 +15,38 @@ onMounted(async () => {
         userCertificates.value.push(c)
       })
     })
+    userCertificates.value.forEach(x => {
+      getUserDeviceMeasurement(x.device_address, x.measurements, x.id)
+    })
   } catch (error) {
     console.error("Error fetching devices:", error);
     // Handle the error appropriately
   }
 });
 
+const getUserDeviceMeasurement = async (deviceAddress, measurementsId, certificateId) => {
+  let measurements = []
+  try {
+    const devices = await UserStore.getDevice(deviceAddress);
+    measurementsId.forEach(x => {
+      const measurement = devices.measurements.find(m => m.id === x)
+      measurements.push(measurement)
+    })
+    measurementsMap[certificateId] = measurements;
+    return measurements
+  } catch (error) {
+    console.error("Error fetching devices:", error);
+  }
+}
+
+
 async function  authorizeCertificate(userAddress:string,certificateId:number) {
-  const msgAddCertificateToMarketplace = {authorizer: UserStore.userAddress, userAddress: userAddress,
-    certificateId: certificateId};
+  const msgAddCertificateToMarketplace = {
+    authorizer: UserStore.userAddress,
+    userAddress: userAddress,
+    certificateId: certificateId,
+    validUntil: new Date(validUntillMap[certificateId])
+  };
   const x = txClient().msgAuthorizeCertificate({value: msgAddCertificateToMarketplace});
   await confirmTransaction(x);
 }
@@ -36,6 +61,12 @@ async function  authorizeCertificate(userAddress:string,certificateId:number) {
         <h3>Certificate type: {{cert.certyficate_type_id}}</h3>
         <h3>Device address: {{cert.device_address}}</h3>
         <h3>Used power: {{cert.power}}Wh</h3>
+        <span class="listing-div" v-for="measurement in measurementsMap[cert.id]">
+        <h3>Measurement id: {{measurement.id}}</h3>
+        <h3>Measurement value: {{measurement.active_power}}Wh</h3>
+        <h3>Measurement timestamp: {{measurement.timestamp}}</h3>
+      </span>
+      <input class="input-field" v-model="validUntillMap[cert.id]" type="date" placeholder="Valid untill" />
       <button @click="authorizeCertificate(cert.user_address, cert.id)">Authorize this certificate</button>
     </div>
   </div>

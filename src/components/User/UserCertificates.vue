@@ -1,30 +1,59 @@
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {onMounted, reactive, ref} from "vue";
 import {UserStore} from "../../services/user_store";
 import {txClient} from "../../../ts-client/chain4energy.c4echain.cfetokenization";
 import {confirmTransaction} from "../helpers";
 import {coins} from "@cosmjs/proto-signing";
-
+const deviceAddressMap = reactive({});
 const userCertificates = ref([]);
+const measurementsMap = reactive({});
 const price = ref();
+
 onMounted(async () => {
   try {
     const certs = await UserStore.getUserCertificates();
     userCertificates.value.push(...certs)
+    userCertificates.value.forEach(x => {
+      getUserDeviceMeasurement(x.device_address, x.measurements, x.id)
+    })
   } catch (error) {
     console.error("Error fetching devices:", error);
   }
 });
 
+const getUserDeviceMeasurement = async (deviceAddress, measurementsId, certificateId) => {
+  let measurements = []
+  try {
+    const devices = await UserStore.getDevice(deviceAddress);
+    measurementsId.forEach(x => {
+      const measurement = devices.measurements.find(m => m.id === x)
+      measurements.push(measurement)
+    })
+    measurementsMap[certificateId] = measurements;
+    return measurements
+  } catch (error) {
+    console.error("Error fetching devices:", error);
+  }
+}
+
 const addCertificateToMarketplace = async (certId:number) => {
   const priceCoins = coins(price.value * 1000000, "uc4e")
-  const msgAddCertificateToMarketplace = {owner: UserStore.userAddress, certificateId: certId, price: priceCoins};
+  const msgAddCertificateToMarketplace = {
+    owner: UserStore.userAddress,
+    certificateId: certId,
+    price: priceCoins
+  };
   const x = txClient().msgAddCertificateToMarketplace({value: msgAddCertificateToMarketplace});
   await confirmTransaction(x);
 }
 
 const burnCertificate = async (certId:number) => {
-  const msgAddCertificateToMarketplace = {owner: UserStore.userAddress, certificateId: certId};
+  const msgAddCertificateToMarketplace = {
+    owner: UserStore.userAddress,
+    certificateId: certId,
+    deviceAddress: deviceAddressMap[certId],
+  };
+  console.log(msgAddCertificateToMarketplace)
   const x = txClient().msgBurnCertificate({value: msgAddCertificateToMarketplace});
   await confirmTransaction(x);
 }
@@ -39,6 +68,13 @@ const burnCertificate = async (certId:number) => {
       <h3>Device address: {{cert.device_address}}</h3>
       <h3>Used power: {{cert.power}}Wh</h3>
       <h3 v-if="cert.authority != ''">Authority: {{cert.authority}}</h3>
+      <h3 v-if="cert.valid_until != null">Valid until: {{cert.valid_until}}</h3>
+      <span class="listing-div" v-for="measurement in measurementsMap[cert.id]">
+        <h3>Measurement id: {{measurement.id}}</h3>
+        <h3>Measurement value: {{measurement.active_power}}Wh</h3>
+        <h3>Measurement timestamp: {{measurement.timestamp}}</h3>
+      </span>
+
       <div v-if="cert.certificate_status === 'VALID'">
         <div style="text-align: center; margin-bottom: 10px">
           <input class="input-field" v-model="price" type="number" placeholder="Price in C4E"/>
@@ -46,6 +82,7 @@ const burnCertificate = async (certId:number) => {
         </div>
         <hr>
         <div style="text-align: center; margin-bottom: 10px">
+          <input class="input-field" v-model="deviceAddressMap[cert.id]" type="text" placeholder="Device address to fulfil used energy"/>
           <button @click="burnCertificate(cert.id)">Burn this certificate</button>
         </div>
       </div>

@@ -8,7 +8,6 @@ const devices = ref([]);
 
 onMounted(async () => {
   try {
-
     const userDevices = await UserStore.getUserDevices();
     console.log(userDevices)
     if (userDevices.length > 0) {

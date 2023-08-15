@@ -101,4 +101,6 @@ export const createEncodedMsg = (objectToEncode: any, typeUrl:string) => {
         value: objectToEncode,
     };
 }
+
+
 declare global { interface Window {keplr:any} }
