@@ -18,6 +18,7 @@ export interface MsgAcceptDevice {
   userAddress: string;
   deviceAddress: string;
   deviceName: string;
+  deviceLocation: string;
 }
 
 export interface MsgAcceptDeviceResponse {
@@ -29,6 +30,7 @@ export interface MsgCreateUserCertificates {
   power: number;
   allowedAuthorities: string[];
   certyficateTypeId: number;
+  measurements: number[];
 }
 
 export interface MsgCreateUserCertificatesResponse {
@@ -37,7 +39,9 @@ export interface MsgCreateUserCertificatesResponse {
 export interface MsgAddMeasurement {
   deviceAddress: string;
   timestamp: Date | undefined;
-  power: number;
+  activePower: number;
+  reversePower: number;
+  metadata: string;
 }
 
 export interface MsgAddMeasurementResponse {
@@ -63,6 +67,7 @@ export interface MsgBuyCertificateResponse {
 export interface MsgBurnCertificate {
   owner: string;
   certificateId: number;
+  deviceAddress: string;
 }
 
 export interface MsgBurnCertificateResponse {
@@ -72,6 +77,7 @@ export interface MsgAuthorizeCertificate {
   authorizer: string;
   userAddress: string;
   certificateId: number;
+  validUntil: Date | undefined;
 }
 
 export interface MsgAuthorizeCertificateResponse {
@@ -175,7 +181,7 @@ export const MsgAssignDeviceToUserResponse = {
 };
 
 function createBaseMsgAcceptDevice(): MsgAcceptDevice {
-  return { userAddress: "", deviceAddress: "", deviceName: "" };
+  return { userAddress: "", deviceAddress: "", deviceName: "", deviceLocation: "" };
 }
 
 export const MsgAcceptDevice = {
@@ -188,6 +194,9 @@ export const MsgAcceptDevice = {
     }
     if (message.deviceName !== "") {
       writer.uint32(26).string(message.deviceName);
+    }
+    if (message.deviceLocation !== "") {
+      writer.uint32(34).string(message.deviceLocation);
     }
     return writer;
   },
@@ -208,6 +217,9 @@ export const MsgAcceptDevice = {
         case 3:
           message.deviceName = reader.string();
           break;
+        case 4:
+          message.deviceLocation = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -221,6 +233,7 @@ export const MsgAcceptDevice = {
       userAddress: isSet(object.userAddress) ? String(object.userAddress) : "",
       deviceAddress: isSet(object.deviceAddress) ? String(object.deviceAddress) : "",
       deviceName: isSet(object.deviceName) ? String(object.deviceName) : "",
+      deviceLocation: isSet(object.deviceLocation) ? String(object.deviceLocation) : "",
     };
   },
 
@@ -229,6 +242,7 @@ export const MsgAcceptDevice = {
     message.userAddress !== undefined && (obj.userAddress = message.userAddress);
     message.deviceAddress !== undefined && (obj.deviceAddress = message.deviceAddress);
     message.deviceName !== undefined && (obj.deviceName = message.deviceName);
+    message.deviceLocation !== undefined && (obj.deviceLocation = message.deviceLocation);
     return obj;
   },
 
@@ -237,6 +251,7 @@ export const MsgAcceptDevice = {
     message.userAddress = object.userAddress ?? "";
     message.deviceAddress = object.deviceAddress ?? "";
     message.deviceName = object.deviceName ?? "";
+    message.deviceLocation = object.deviceLocation ?? "";
     return message;
   },
 };
@@ -281,7 +296,7 @@ export const MsgAcceptDeviceResponse = {
 };
 
 function createBaseMsgCreateUserCertificates(): MsgCreateUserCertificates {
-  return { owner: "", deviceAddress: "", power: 0, allowedAuthorities: [], certyficateTypeId: 0 };
+  return { owner: "", deviceAddress: "", power: 0, allowedAuthorities: [], certyficateTypeId: 0, measurements: [] };
 }
 
 export const MsgCreateUserCertificates = {
@@ -301,6 +316,11 @@ export const MsgCreateUserCertificates = {
     if (message.certyficateTypeId !== 0) {
       writer.uint32(40).uint64(message.certyficateTypeId);
     }
+    writer.uint32(50).fork();
+    for (const v of message.measurements) {
+      writer.uint64(v);
+    }
+    writer.ldelim();
     return writer;
   },
 
@@ -326,6 +346,16 @@ export const MsgCreateUserCertificates = {
         case 5:
           message.certyficateTypeId = longToNumber(reader.uint64() as Long);
           break;
+        case 6:
+          if ((tag & 7) === 2) {
+            const end2 = reader.uint32() + reader.pos;
+            while (reader.pos < end2) {
+              message.measurements.push(longToNumber(reader.uint64() as Long));
+            }
+          } else {
+            message.measurements.push(longToNumber(reader.uint64() as Long));
+          }
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -343,6 +373,7 @@ export const MsgCreateUserCertificates = {
         ? object.allowedAuthorities.map((e: any) => String(e))
         : [],
       certyficateTypeId: isSet(object.certyficateTypeId) ? Number(object.certyficateTypeId) : 0,
+      measurements: Array.isArray(object?.measurements) ? object.measurements.map((e: any) => Number(e)) : [],
     };
   },
 
@@ -357,6 +388,11 @@ export const MsgCreateUserCertificates = {
       obj.allowedAuthorities = [];
     }
     message.certyficateTypeId !== undefined && (obj.certyficateTypeId = Math.round(message.certyficateTypeId));
+    if (message.measurements) {
+      obj.measurements = message.measurements.map((e) => Math.round(e));
+    } else {
+      obj.measurements = [];
+    }
     return obj;
   },
 
@@ -367,6 +403,7 @@ export const MsgCreateUserCertificates = {
     message.power = object.power ?? 0;
     message.allowedAuthorities = object.allowedAuthorities?.map((e) => e) || [];
     message.certyficateTypeId = object.certyficateTypeId ?? 0;
+    message.measurements = object.measurements?.map((e) => e) || [];
     return message;
   },
 };
@@ -413,7 +450,7 @@ export const MsgCreateUserCertificatesResponse = {
 };
 
 function createBaseMsgAddMeasurement(): MsgAddMeasurement {
-  return { deviceAddress: "", timestamp: undefined, power: 0 };
+  return { deviceAddress: "", timestamp: undefined, activePower: 0, reversePower: 0, metadata: "" };
 }
 
 export const MsgAddMeasurement = {
@@ -424,8 +461,14 @@ export const MsgAddMeasurement = {
     if (message.timestamp !== undefined) {
       Timestamp.encode(toTimestamp(message.timestamp), writer.uint32(18).fork()).ldelim();
     }
-    if (message.power !== 0) {
-      writer.uint32(24).uint64(message.power);
+    if (message.activePower !== 0) {
+      writer.uint32(24).uint64(message.activePower);
+    }
+    if (message.reversePower !== 0) {
+      writer.uint32(32).uint64(message.reversePower);
+    }
+    if (message.metadata !== "") {
+      writer.uint32(42).string(message.metadata);
     }
     return writer;
   },
@@ -444,7 +487,13 @@ export const MsgAddMeasurement = {
           message.timestamp = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
           break;
         case 3:
-          message.power = longToNumber(reader.uint64() as Long);
+          message.activePower = longToNumber(reader.uint64() as Long);
+          break;
+        case 4:
+          message.reversePower = longToNumber(reader.uint64() as Long);
+          break;
+        case 5:
+          message.metadata = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -458,7 +507,9 @@ export const MsgAddMeasurement = {
     return {
       deviceAddress: isSet(object.deviceAddress) ? String(object.deviceAddress) : "",
       timestamp: isSet(object.timestamp) ? fromJsonTimestamp(object.timestamp) : undefined,
-      power: isSet(object.power) ? Number(object.power) : 0,
+      activePower: isSet(object.activePower) ? Number(object.activePower) : 0,
+      reversePower: isSet(object.reversePower) ? Number(object.reversePower) : 0,
+      metadata: isSet(object.metadata) ? String(object.metadata) : "",
     };
   },
 
@@ -466,7 +517,9 @@ export const MsgAddMeasurement = {
     const obj: any = {};
     message.deviceAddress !== undefined && (obj.deviceAddress = message.deviceAddress);
     message.timestamp !== undefined && (obj.timestamp = message.timestamp.toISOString());
-    message.power !== undefined && (obj.power = Math.round(message.power));
+    message.activePower !== undefined && (obj.activePower = Math.round(message.activePower));
+    message.reversePower !== undefined && (obj.reversePower = Math.round(message.reversePower));
+    message.metadata !== undefined && (obj.metadata = message.metadata);
     return obj;
   },
 
@@ -474,7 +527,9 @@ export const MsgAddMeasurement = {
     const message = createBaseMsgAddMeasurement();
     message.deviceAddress = object.deviceAddress ?? "";
     message.timestamp = object.timestamp ?? undefined;
-    message.power = object.power ?? 0;
+    message.activePower = object.activePower ?? 0;
+    message.reversePower = object.reversePower ?? 0;
+    message.metadata = object.metadata ?? "";
     return message;
   },
 };
@@ -731,7 +786,7 @@ export const MsgBuyCertificateResponse = {
 };
 
 function createBaseMsgBurnCertificate(): MsgBurnCertificate {
-  return { owner: "", certificateId: 0 };
+  return { owner: "", certificateId: 0, deviceAddress: "" };
 }
 
 export const MsgBurnCertificate = {
@@ -741,6 +796,9 @@ export const MsgBurnCertificate = {
     }
     if (message.certificateId !== 0) {
       writer.uint32(16).uint64(message.certificateId);
+    }
+    if (message.deviceAddress !== "") {
+      writer.uint32(26).string(message.deviceAddress);
     }
     return writer;
   },
@@ -758,6 +816,9 @@ export const MsgBurnCertificate = {
         case 2:
           message.certificateId = longToNumber(reader.uint64() as Long);
           break;
+        case 3:
+          message.deviceAddress = reader.string();
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -770,6 +831,7 @@ export const MsgBurnCertificate = {
     return {
       owner: isSet(object.owner) ? String(object.owner) : "",
       certificateId: isSet(object.certificateId) ? Number(object.certificateId) : 0,
+      deviceAddress: isSet(object.deviceAddress) ? String(object.deviceAddress) : "",
     };
   },
 
@@ -777,6 +839,7 @@ export const MsgBurnCertificate = {
     const obj: any = {};
     message.owner !== undefined && (obj.owner = message.owner);
     message.certificateId !== undefined && (obj.certificateId = Math.round(message.certificateId));
+    message.deviceAddress !== undefined && (obj.deviceAddress = message.deviceAddress);
     return obj;
   },
 
@@ -784,6 +847,7 @@ export const MsgBurnCertificate = {
     const message = createBaseMsgBurnCertificate();
     message.owner = object.owner ?? "";
     message.certificateId = object.certificateId ?? 0;
+    message.deviceAddress = object.deviceAddress ?? "";
     return message;
   },
 };
@@ -828,7 +892,7 @@ export const MsgBurnCertificateResponse = {
 };
 
 function createBaseMsgAuthorizeCertificate(): MsgAuthorizeCertificate {
-  return { authorizer: "", userAddress: "", certificateId: 0 };
+  return { authorizer: "", userAddress: "", certificateId: 0, validUntil: undefined };
 }
 
 export const MsgAuthorizeCertificate = {
@@ -841,6 +905,9 @@ export const MsgAuthorizeCertificate = {
     }
     if (message.certificateId !== 0) {
       writer.uint32(24).uint64(message.certificateId);
+    }
+    if (message.validUntil !== undefined) {
+      Timestamp.encode(toTimestamp(message.validUntil), writer.uint32(34).fork()).ldelim();
     }
     return writer;
   },
@@ -861,6 +928,9 @@ export const MsgAuthorizeCertificate = {
         case 3:
           message.certificateId = longToNumber(reader.uint64() as Long);
           break;
+        case 4:
+          message.validUntil = fromTimestamp(Timestamp.decode(reader, reader.uint32()));
+          break;
         default:
           reader.skipType(tag & 7);
           break;
@@ -874,6 +944,7 @@ export const MsgAuthorizeCertificate = {
       authorizer: isSet(object.authorizer) ? String(object.authorizer) : "",
       userAddress: isSet(object.userAddress) ? String(object.userAddress) : "",
       certificateId: isSet(object.certificateId) ? Number(object.certificateId) : 0,
+      validUntil: isSet(object.validUntil) ? fromJsonTimestamp(object.validUntil) : undefined,
     };
   },
 
@@ -882,6 +953,7 @@ export const MsgAuthorizeCertificate = {
     message.authorizer !== undefined && (obj.authorizer = message.authorizer);
     message.userAddress !== undefined && (obj.userAddress = message.userAddress);
     message.certificateId !== undefined && (obj.certificateId = Math.round(message.certificateId));
+    message.validUntil !== undefined && (obj.validUntil = message.validUntil.toISOString());
     return obj;
   },
 
@@ -890,6 +962,7 @@ export const MsgAuthorizeCertificate = {
     message.authorizer = object.authorizer ?? "";
     message.userAddress = object.userAddress ?? "";
     message.certificateId = object.certificateId ?? 0;
+    message.validUntil = object.validUntil ?? undefined;
     return message;
   },
 };

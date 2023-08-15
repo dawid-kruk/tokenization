@@ -20,6 +20,12 @@
       </p>
     </div>
     <hr>
+    <p>Specify which measurements to use</p>
+    <div class="listing-div" style="border: 2px solid black;" v-for="measurement in userDevice.measurements">
+      <h3>Timestamp: {{new Date(measurement.timestamp).toLocaleString()}}</h3>
+      <h3>Active power: {{measurement.active_power}}Wh</h3>
+    </div>
+    <hr>
     <!-- You can further customize allowedAuthorities input -->
     <button class="action-button" @click="createUserCertificates()" style="width: 350px;">Create user certificates</button>
   </div>
@@ -30,15 +36,15 @@ import {onMounted, ref} from "vue";
 import {confirmTransaction} from "../helpers";
 import { txClient} from "../../../ts-client/chain4energy.c4echain.cfetokenization";
 import {UserStore} from "../../services/user_store";
-
+const userDevice = ref(UserStore.device)
 const power = ref();
 const maxPower = ref(UserStore.device.power_sum - UserStore.device.used_power);
 const certyficateTypeId = ref();
 const certificateTypes = ref([]);
 
 const allowedAuthoritiesList = ref([
-    {address: "c4e1lt5npfrl4fnvkxm387d8fc59x3vwugagm4vnzm", name: "keno"},
-    {address: "c4e1n65nctlr97na2h9sjul94ge4y95uhtxwmhn9kx", name: "tauron"},
+    {address: "c4e1lt5npfrl4fnvkxm387d8fc59x3vwugagm4vnzm", name: "authority 1"},
+    {address: "c4e1n65nctlr97na2h9sjul94ge4y95uhtxwmhn9kx", name: "authority 2"},
 
 ]);
 
