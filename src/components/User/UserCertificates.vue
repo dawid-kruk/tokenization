@@ -53,7 +53,6 @@ const burnCertificate = async (certId:number) => {
     certificateId: certId,
     deviceAddress: deviceAddressMap[certId],
   };
-  console.log(msgAddCertificateToMarketplace)
   const x = txClient().msgBurnCertificate({value: msgAddCertificateToMarketplace});
   await confirmTransaction(x);
 }
