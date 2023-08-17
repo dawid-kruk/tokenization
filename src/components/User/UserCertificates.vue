@@ -70,7 +70,7 @@ const burnCertificate = async (certId:number) => {
       <h3 v-if="cert.valid_until != null">Valid until: {{cert.valid_until}}</h3>
       <span class="listing-div" v-for="measurement in measurementsMap[cert.id]">
         <h3>Measurement id: {{measurement.id}}</h3>
-        <h3>Measurement value: {{measurement.active_power}}Wh</h3>
+        <h3>Measurement value: {{measurement.reverse_power}}Wh</h3>
         <h3>Measurement timestamp: {{measurement.timestamp}}</h3>
       </span>
 

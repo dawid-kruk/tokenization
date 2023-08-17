@@ -21,7 +21,7 @@
     <span v-for="measurement in userDevice.measurements">
       <div v-if="!measurement.used_for_certificate" v-bind:class="[measurementsIds.findIndex(x => x === measurement.id) != -1 ? 'activeCertificateType' : '']" @click="measurementsIds.push(measurement.id)" class="listing-div" style="border: 2px solid black; cursor: pointer" >
         <h3>Timestamp: {{new Date(measurement.timestamp).toLocaleString()}}</h3>
-        <h3>Active power: {{measurement.active_power}}Wh</h3>
+        <h3>Energy produced: {{measurement.reverse_power}}Wh</h3>
       </div>
     </span>
 
@@ -38,11 +38,10 @@ import { txClient} from "../../../ts-client/chain4energy.c4echain.cfetokenizatio
 import {UserStore} from "../../services/user_store";
 const userDevice = ref(UserStore.device)
 const power = ref();
-const maxPower = ref(UserStore.device.power_sum - UserStore.device.used_power);
 const certyficateTypeId = ref();
 const measurementsIds = ref([]);
 const certificateTypes = ref([]);
-console.log(UserStore.device.measurements)
+
 const allowedAuthoritiesList = ref([
     {address: "c4e1lt5npfrl4fnvkxm387d8fc59x3vwugagm4vnzm", name: "authority 1"},
     {address: "c4e1n65nctlr97na2h9sjul94ge4y95uhtxwmhn9kx", name: "authority 2"},
@@ -76,10 +75,6 @@ onMounted(async () => {
   }
 });
 const createUserCertificates = async () => {
-  if (power.value > maxPower.value) {
-    alert("You don't have enough power")
-    return
-  }
   const msgCreateUserCertificates = {
     owner: UserStore.userAddress,
     deviceAddress: UserStore.device.device_address,

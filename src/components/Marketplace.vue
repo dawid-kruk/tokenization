@@ -34,7 +34,7 @@ async function  buyCertificate(certificateId:number) {
         <h3>Price: {{cert.price[0].amount}}{{cert.price[0].denom}} ({{cert.price[0].amount / 1000000}}C4E)</h3>
         <span class="listing-div" v-for="measurement in cert.measurements">
           <h3>Measurement id: {{measurement.id}}</h3>
-          <h3>Measurement value: {{measurement.active_power}}Wh</h3>
+          <h3>Measurement value: {{measurement.reverse_power}}Wh</h3>
           <h3>Measurement timestamp: {{measurement.timestamp}}</h3>
         </span>
         <button @click="buyCertificate( cert.id)">Buy this certificate</button>
