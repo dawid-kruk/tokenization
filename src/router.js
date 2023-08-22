@@ -9,6 +9,7 @@ import AcceptDevice from "./components/User/AcceptDevice.vue";
 import CreateUserCertificates from "./components/User/CreateUserCertificates.vue";
 import Marketplace from "./components/Marketplace.vue";
 import Measurements from "./components/User/Measurements.vue";
+import EnergyRaport from "./components/User/EnergyRaport.vue";
 
 export const router = createRouter({
     history: createWebHistory(),
@@ -44,6 +45,10 @@ export const router = createRouter({
                         {
                             path: 'show-measurements',
                             component: Measurements,
+                        },
+                        {
+                            path: 'energy-raport',
+                            component: EnergyRaport,
                         },
                     ]
                 },

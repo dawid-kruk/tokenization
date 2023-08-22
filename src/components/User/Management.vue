@@ -33,6 +33,11 @@ async function showMeasurements(device:any) {
   router.push('/user/show-measurements');
 }
 
+async function energyRaport(device:any) {
+  UserStore.setCurrentDevice(device)
+  router.push('/user/energy-raport');
+}
+
 </script>
 
 <template>
@@ -46,6 +51,7 @@ async function showMeasurements(device:any) {
       <h3>Used power for energy certificates: {{dev.used_energy_produced}}Wh</h3>
       <h3>Fulfilled energy consumed: {{dev.fulfilled_energy_consumed}}Wh</h3>
       <button @click="showMeasurements(dev)" style="background: green; margin-bottom: 10px; color: white">Show all measurements</button>
+      <button @click="energyRaport(dev)" style="background: #77341b; margin-bottom: 10px; color: white">Show energy raport</button>
       <button @click="addCertificate(dev)">Add certificate from this device</button>
     </div>
   </div>
