@@ -15,30 +15,11 @@ onMounted(async () => {
         userCertificates.value.push(c)
       })
     })
-    userCertificates.value.forEach(x => {
-      getUserDeviceMeasurement(x.device_address, x.measurements, x.id)
-    })
   } catch (error) {
     console.error("Error fetching devices:", error);
     // Handle the error appropriately
   }
 });
-
-const getUserDeviceMeasurement = async (deviceAddress, measurementsId, certificateId) => {
-  let measurements = []
-  try {
-    const devices = await UserStore.getDevice(deviceAddress);
-    measurementsId.forEach(x => {
-      const measurement = devices.measurements.find(m => m.id === x)
-      measurements.push(measurement)
-    })
-    measurementsMap[certificateId] = measurements;
-    return measurements
-  } catch (error) {
-    console.error("Error fetching devices:", error);
-  }
-}
-
 
 async function  authorizeCertificate(userAddress:string,certificateId:number) {
   const msgAddCertificateToMarketplace = {
@@ -61,7 +42,7 @@ async function  authorizeCertificate(userAddress:string,certificateId:number) {
         <h3>Certificate type: {{cert.certyficate_type_id}}</h3>
         <h3>Device address: {{cert.device_address}}</h3>
         <h3>Used power: {{cert.power}}Wh</h3>
-        <span class="listing-div" v-for="measurement in measurementsMap[cert.id]">
+        <span class="listing-div"  v-for="measurement in cert.measurements">
         <h3>Measurement id: {{measurement.id}}</h3>
         <h3>Measurement value: {{measurement.reverse_power}}Wh</h3>
         <h3>Measurement timestamp: {{measurement.timestamp}}</h3>
