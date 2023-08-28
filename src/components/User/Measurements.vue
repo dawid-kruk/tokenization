@@ -11,7 +11,7 @@ const userDevice = ref(UserStore.device)
     <h3>Timestamp: {{new Date(measurement.timestamp).toLocaleString()}}</h3>
     <h3 v-if="measurement.used_for_certificate" style="color: red">Already used</h3>
     <h3 v-if="!measurement.used_for_certificate" style="color: green">Can be used for an energy certificate</h3>
-    <h3>Reverse produced: {{measurement.reverse_power}}Wh</h3>
+    <h3>Energy produced: {{measurement.reverse_power}}Wh</h3>
     <h3>Energy consumed: {{measurement.active_power}}Wh</h3>
     <h3>Metadata: {{measurement.metadata}}</h3>
   </div>

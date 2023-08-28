@@ -13,6 +13,7 @@
     <p>Select certificate type:</p>
     <div v-for="cert in certificateTypes" @click="selectCertificateType(cert.id)">
       <p v-bind:class="[certyficateTypeId === cert.id ? 'activeCertificateType' : '']" class="certType">
+        {{cert.id}}
         {{cert.name}} - {{cert.description}}
       </p>
     </div>
@@ -38,7 +39,7 @@ import { txClient} from "../../../ts-client/chain4energy.c4echain.cfetokenizatio
 import {UserStore} from "../../services/user_store";
 const userDevice = ref(UserStore.device)
 const power = ref();
-const certyficateTypeId = ref();
+const certyficateTypeId = ref('0');
 const measurementsIds = ref([]);
 const certificateTypes = ref([]);
 
@@ -48,10 +49,10 @@ const allowedAuthoritiesList = ref([
 
 ]);
 
-const allowedAuthorities = ref([]);
+const allowedAuthorities = ref(["c4e1lt5npfrl4fnvkxm387d8fc59x3vwugagm4vnzm"]);
 
 
-function selectCertificateType(id: number) {
+function selectCertificateType(id: string) {
   certyficateTypeId.value = id
 }
 
@@ -79,7 +80,7 @@ const createUserCertificates = async () => {
     owner: UserStore.userAddress,
     deviceAddress: UserStore.device.device_address,
     allowedAuthorities: [...allowedAuthorities.value],
-    certyficateTypeId: certyficateTypeId.value,
+    certyficateTypeId: +certyficateTypeId.value,
     measurements: measurementsIds.value,
   };
 
