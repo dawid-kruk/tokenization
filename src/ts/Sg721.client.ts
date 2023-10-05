@@ -151,81 +151,65 @@ export interface Sg721Interface extends Sg721ReadOnlyInterface {
   contractAddress: string;
   sender: string;
   assignDeviceToUser: ({
-    deviceAddress,
     userAddress
   }: {
-    deviceAddress: string;
     userAddress: string;
   }, fee?: number | StdFee | "auto", memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
   acceptDevice: ({
     deviceAddress,
     deviceLocation,
-    deviceName,
-    userAddress
+    deviceName
   }: {
     deviceAddress: string;
     deviceLocation: string;
     deviceName: string;
-    userAddress: string;
   }, fee?: number | StdFee | "auto", memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
   createUserCertificates: ({
     allowedAuthorities,
     certificateTypeId,
     deviceAddress,
-    measurements,
-    owner
+    measurements
   }: {
     allowedAuthorities: string[];
     certificateTypeId: number;
     deviceAddress: string;
     measurements: number[];
-    owner: string;
   }, fee?: number | StdFee | "auto", memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
   addMeasurement: ({
     activePower,
-    deviceAddress,
     metadata,
     reversePower,
     timestamp
   }: {
     activePower: number;
-    deviceAddress: string;
     metadata: string;
     reversePower: number;
     timestamp: Timestamp;
   }, fee?: number | StdFee | "auto", memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
   addCertificateToMarketplace: ({
     certificateId,
-    owner,
     price
   }: {
     certificateId: number;
-    owner: string;
     price: number;
   }, fee?: number | StdFee | "auto", memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
   buyCertificate: ({
-    buyer,
     marketplaceCertificateId
   }: {
-    buyer: string;
     marketplaceCertificateId: number;
   }, fee?: number | StdFee | "auto", memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
   burnCertificate: ({
     certificateId,
-    deviceAddress,
-    owner
+    deviceAddress
   }: {
     certificateId: number;
     deviceAddress: string;
-    owner: string;
   }, fee?: number | StdFee | "auto", memo?: string, _funds?: Coin[]) => Promise<ExecuteResult>;
   authorizeCertificate: ({
-    authorizer,
     certificateId,
     userAddress,
     validUntil
   }: {
-    authorizer: string;
     certificateId: number;
     userAddress: string;
     validUntil: Timestamp;
@@ -252,15 +236,12 @@ export class Sg721Client extends Sg721QueryClient implements Sg721Interface {
   }
 
   assignDeviceToUser = async ({
-    deviceAddress,
     userAddress
   }: {
-    deviceAddress: string;
     userAddress: string;
   }, fee: number | StdFee | "auto" = "auto", memo?: string, _funds?: Coin[]): Promise<ExecuteResult> => {
     return await this.client.execute(this.sender, this.contractAddress, {
       assign_device_to_user: {
-        device_address: deviceAddress,
         user_address: userAddress
       }
     }, fee, memo, _funds);
@@ -268,20 +249,17 @@ export class Sg721Client extends Sg721QueryClient implements Sg721Interface {
   acceptDevice = async ({
     deviceAddress,
     deviceLocation,
-    deviceName,
-    userAddress
+    deviceName
   }: {
     deviceAddress: string;
     deviceLocation: string;
     deviceName: string;
-    userAddress: string;
   }, fee: number | StdFee | "auto" = "auto", memo?: string, _funds?: Coin[]): Promise<ExecuteResult> => {
     return await this.client.execute(this.sender, this.contractAddress, {
       accept_device: {
         device_address: deviceAddress,
         device_location: deviceLocation,
-        device_name: deviceName,
-        user_address: userAddress
+        device_name: deviceName
       }
     }, fee, memo, _funds);
   };
@@ -289,34 +267,29 @@ export class Sg721Client extends Sg721QueryClient implements Sg721Interface {
     allowedAuthorities,
     certificateTypeId,
     deviceAddress,
-    measurements,
-    owner
+    measurements
   }: {
     allowedAuthorities: string[];
     certificateTypeId: number;
     deviceAddress: string;
     measurements: number[];
-    owner: string;
   }, fee: number | StdFee | "auto" = "auto", memo?: string, _funds?: Coin[]): Promise<ExecuteResult> => {
     return await this.client.execute(this.sender, this.contractAddress, {
       create_user_certificates: {
         allowed_authorities: allowedAuthorities,
         certificate_type_id: certificateTypeId,
         device_address: deviceAddress,
-        measurements,
-        owner
+        measurements
       }
     }, fee, memo, _funds);
   };
   addMeasurement = async ({
     activePower,
-    deviceAddress,
     metadata,
     reversePower,
     timestamp
   }: {
     activePower: number;
-    deviceAddress: string;
     metadata: string;
     reversePower: number;
     timestamp: Timestamp;
@@ -324,7 +297,6 @@ export class Sg721Client extends Sg721QueryClient implements Sg721Interface {
     return await this.client.execute(this.sender, this.contractAddress, {
       add_measurement: {
         active_power: activePower,
-        device_address: deviceAddress,
         metadata,
         reverse_power: reversePower,
         timestamp
@@ -333,66 +305,54 @@ export class Sg721Client extends Sg721QueryClient implements Sg721Interface {
   };
   addCertificateToMarketplace = async ({
     certificateId,
-    owner,
     price
   }: {
     certificateId: number;
-    owner: string;
     price: number;
   }, fee: number | StdFee | "auto" = "auto", memo?: string, _funds?: Coin[]): Promise<ExecuteResult> => {
     return await this.client.execute(this.sender, this.contractAddress, {
       add_certificate_to_marketplace: {
         certificate_id: certificateId,
-        owner,
         price
       }
     }, fee, memo, _funds);
   };
   buyCertificate = async ({
-    buyer,
     marketplaceCertificateId
   }: {
-    buyer: string;
     marketplaceCertificateId: number;
   }, fee: number | StdFee | "auto" = "auto", memo?: string, _funds?: Coin[]): Promise<ExecuteResult> => {
     return await this.client.execute(this.sender, this.contractAddress, {
       buy_certificate: {
-        buyer,
         marketplace_certificate_id: marketplaceCertificateId
       }
     }, fee, memo, _funds);
   };
   burnCertificate = async ({
     certificateId,
-    deviceAddress,
-    owner
+    deviceAddress
   }: {
     certificateId: number;
     deviceAddress: string;
-    owner: string;
   }, fee: number | StdFee | "auto" = "auto", memo?: string, _funds?: Coin[]): Promise<ExecuteResult> => {
     return await this.client.execute(this.sender, this.contractAddress, {
       burn_certificate: {
         certificate_id: certificateId,
-        device_address: deviceAddress,
-        owner
+        device_address: deviceAddress
       }
     }, fee, memo, _funds);
   };
   authorizeCertificate = async ({
-    authorizer,
     certificateId,
     userAddress,
     validUntil
   }: {
-    authorizer: string;
     certificateId: number;
     userAddress: string;
     validUntil: Timestamp;
   }, fee: number | StdFee | "auto" = "auto", memo?: string, _funds?: Coin[]): Promise<ExecuteResult> => {
     return await this.client.execute(this.sender, this.contractAddress, {
       authorize_certificate: {
-        authorizer,
         certificate_id: certificateId,
         user_address: userAddress,
         valid_until: validUntil

@@ -2,14 +2,14 @@
 import {onMounted, reactive, ref} from "vue";
 import {UserStore} from "../services/user_store.js";
 import {txClient} from "../../ts-client/chain4energy.c4echain.cfetokenization";
-import {confirmTransaction} from "./helpers";
+import {getFees, handleTransaction} from "./helpers";
 const userCertificates = ref([]);
 const measurementsMap = reactive({});
 const validUntillMap = reactive({});
 onMounted(async () => {
   try {
-    const certs = await UserStore.getAllUserCertificates();
-    certs.forEach((cert) => {
+    const userCertificatesAllResponse = await UserStore.client.allUserCertificates();
+    userCertificatesAllResponse.all_user_certificates.forEach((cert) => {
       cert.certificates.forEach((c) => {
         c.user_address = cert.owner
         userCertificates.value.push(c)
@@ -22,14 +22,13 @@ onMounted(async () => {
 });
 
 async function  authorizeCertificate(userAddress:string,certificateId:number) {
-  const msgAddCertificateToMarketplace = {
+
+  await handleTransaction(() => UserStore.client.authorizeCertificate({
     authorizer: UserStore.userAddress,
     userAddress: userAddress,
     certificateId: certificateId,
     validUntil: new Date(validUntillMap[certificateId])
-  };
-  const x = txClient().msgAuthorizeCertificate({value: msgAddCertificateToMarketplace});
-  await confirmTransaction(x);
+  }, getFees()));
 }
 </script>
 

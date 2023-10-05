@@ -1,25 +1,25 @@
+<!--suppress ALL -->
 <script setup lang="ts">
 import { UserStore } from "../../services/user_store";
 import { ref, onMounted } from "vue";
 import {router} from '../../router'
-
-const devices = ref([]);
+import {Device} from "../../ts/Sg721.types";
+const devices = ref<Device[]>([]);
 
 onMounted(async () => {
   try {
-    const userDevices = await UserStore.getUserDevices();
-    if (userDevices.length > 0) {
-      for (const dev of userDevices) {
-        const device = await UserStore.getDevice(dev.device_address)
-        device.name = dev.name
-        device.location = dev.location
-        devices.value.push(device)
+    const userDevicesResponse = await UserStore.client.userDevices({owner: UserStore.userAddress});
+    if (userDevicesResponse.user_devices.devices.length > 0) {
+      for (const dev of userDevicesResponse.user_devices.devices) {
+        const deviceResponse = await UserStore.client.device({deviceAddress: dev.device_address})
+        deviceResponse.name = dev.name
+        deviceResponse.location = dev.location
+        devices.value.push(deviceResponse)
       }
     }
 
   } catch (error) {
     console.error("Error fetching devices:", error);
-    // Handle the error appropriately
   }
 });
 

@@ -1,21 +1,6 @@
 import {blockchainConfig} from "../blockchainConfig";
 import {ChainInfo} from "@keplr-wallet/types";
 
-export const hexToBytes = (hex): Uint8Array => {
-    let bytes = [];
-    let c = 0;
-    for (; c < hex.length; c += 2)
-        bytes.push(parseInt(hex.substr(c, 2), 16));
-    return new Uint8Array(bytes);
-}
-
-export function bytesToHex(byteArray) {
-    return Array.from(byteArray, function(byte) {
-        // @ts-ignore
-        return ('0' + (byte & 0xFF).toString(16)).slice(-2);
-    }).join('')
-}
-
 export const getFees = () => {
     const convertedFee = [{amount: String(0), denom: "uc4e"}];
     return {gas: String(1000000), amount: convertedFee};
@@ -69,36 +54,23 @@ export const createKeplrConfig = () =>  {
 }
 
 import {GlobalStore} from "../services/global_store";
-import {UserStore} from "../services/user_store";
 
-export async function confirmTransaction(msg:any) {
+export async function handleTransaction(func:any) {
+    if (typeof func !== "function") {
+        console.error('Provided argument is not a function.');
+        return;
+    }
+    GlobalStore.switchLoader()
+    try {
+        const res = await func()
         GlobalStore.switchLoader()
-        try {
-            console.log(msg)
-            console.log(UserStore.getUserClient())
-            const res = await  UserStore.getUserClient().signAndBroadcast(UserStore.userAddress, [msg], getFees())
-            console.log(res)
-            GlobalStore.switchLoader()
-            if (res.code === 0) {
-              alert("Transaction successful!")
-            } else {
-              console.log(res.rawLog)
-              alert("Transaction error! Raw error log:" + res.rawLog)
-            }
-        } catch (e) {
-            console.log(e)
-            GlobalStore.switchLoader()
-            console.log(e.toString())
-            alert("Error: " + e.toString())
-        }
+        alert("Transaction successful!")
+        console.log(res)
+    } catch (e) {
+        console.log(e)
+        GlobalStore.switchLoader()
+        alert("Error: " + e.toString())
+    }
 }
-
-export const createEncodedMsg = (objectToEncode: any, typeUrl:string) => {
-    return {
-        typeUrl: typeUrl,
-        value: objectToEncode,
-    };
-}
-
 
 declare global { interface Window {keplr:any} }

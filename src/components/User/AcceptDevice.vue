@@ -13,7 +13,7 @@
 
 <script setup lang="ts">
 import {ref} from "vue";
-import {confirmTransaction, getFees} from "../helpers";
+import {confirmTransaction, getFees, handleTransaction} from "../helpers";
 import { txClient} from "../../../ts-client/chain4energy.c4echain.cfetokenization";
 import {UserStore} from "../../services/user_store";
 const deviceAddress = ref("");
@@ -32,12 +32,10 @@ const acceptDevice = async () => {
     return;
   }
   const msgAcceptDevice = {
-    userAddress: UserStore.userAddress,
     deviceAddress: deviceAddress.value,
     deviceName: deviceName.value,
     deviceLocation: location.value,
   };
-  const x = await UserStore.client.acceptDevice(msgAcceptDevice, getFees());
-  await confirmTransaction(x);
+  await handleTransaction(() => UserStore.client.acceptDevice(msgAcceptDevice, getFees()));
 }
 </script>

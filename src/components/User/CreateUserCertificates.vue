@@ -34,23 +34,21 @@
 
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import {confirmTransaction} from "../helpers";
 import { txClient} from "../../../ts-client/chain4energy.c4echain.cfetokenization";
 import {UserStore} from "../../services/user_store";
+import {CertificateType, CertificateTypeAllResponse} from "../../ts/Sg721.types";
 const userDevice = ref(UserStore.device)
 const power = ref();
 const certyficateTypeId = ref('0');
 const measurementsIds = ref([]);
-const certificateTypes = ref([]);
+const certificateTypes = ref<CertificateType[]>([]);
 
 const allowedAuthoritiesList = ref([
     {address: "c4e1lt5npfrl4fnvkxm387d8fc59x3vwugagm4vnzm", name: "authority 1"},
     {address: "c4e1n65nctlr97na2h9sjul94ge4y95uhtxwmhn9kx", name: "authority 2"},
-
 ]);
 
 const allowedAuthorities = ref(["c4e1lt5npfrl4fnvkxm387d8fc59x3vwugagm4vnzm"]);
-
 
 function selectCertificateType(id: string) {
   certyficateTypeId.value = id
@@ -67,8 +65,8 @@ function selectAuthority(authorityAddress: string) {
 
 onMounted(async () => {
   try {
-    const certs = await UserStore.getAllCertificateTypes();
-    certificateTypes.value = certs
+    const certificateTypeAllResponse = await UserStore.client.certificateTypes();
+    certificateTypes.value = certificateTypeAllResponse.certificate_types
 
   } catch (error) {
     console.error("Error fetching devices:", error);
@@ -77,7 +75,6 @@ onMounted(async () => {
 });
 const createUserCertificates = async () => {
   const msgCreateUserCertificates = {
-    owner: UserStore.userAddress,
     deviceAddress: UserStore.device.device_address,
     allowedAuthorities: [...allowedAuthorities.value],
     certyficateTypeId: +certyficateTypeId.value,

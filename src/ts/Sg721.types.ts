@@ -20,7 +20,6 @@ export interface CertificateType {
 }
 export type ExecuteMsg = {
   assign_device_to_user: {
-    device_address: string;
     user_address: string;
   };
 } | {
@@ -28,7 +27,6 @@ export type ExecuteMsg = {
     device_address: string;
     device_location: string;
     device_name: string;
-    user_address: string;
   };
 } | {
   create_user_certificates: {
@@ -36,12 +34,10 @@ export type ExecuteMsg = {
     certificate_type_id: number;
     device_address: string;
     measurements: number[];
-    owner: string;
   };
 } | {
   add_measurement: {
     active_power: number;
-    device_address: string;
     metadata: string;
     reverse_power: number;
     timestamp: Timestamp;
@@ -49,23 +45,19 @@ export type ExecuteMsg = {
 } | {
   add_certificate_to_marketplace: {
     certificate_id: number;
-    owner: string;
     price: number;
   };
 } | {
   buy_certificate: {
-    buyer: string;
     marketplace_certificate_id: number;
   };
 } | {
   burn_certificate: {
     certificate_id: number;
     device_address: string;
-    owner: string;
   };
 } | {
   authorize_certificate: {
-    authorizer: string;
     certificate_id: number;
     user_address: string;
     valid_until: Timestamp;
