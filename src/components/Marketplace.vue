@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import {UserStore} from "../services/user_store.js";
-import {txClient} from "../../ts-client/chain4energy.c4echain.cfetokenization";
 import {confirmTransaction} from "./helpers";
 const userCertificates = ref([]);
 onMounted(async () => {

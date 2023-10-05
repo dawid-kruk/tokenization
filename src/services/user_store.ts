@@ -1,10 +1,12 @@
 import {reactive, ref} from "vue";
 import {SigningStargateClient} from "@cosmjs/stargate";
 import {Device} from "../../ts-client/chain4energy.c4echain.cfetokenization";
+import {CosmWasmClient, SigningCosmWasmClient} from "@cosmjs/cosmwasm-stargate";
+import {Sg721Client} from "../ts/Sg721.client";
 
 export const UserStore = {
     userAddress:"",
-    client : {} as SigningStargateClient,
+    client : {} as Sg721Client,
     blockchainEndpoint: "http://localhost:1317",
     device: {} as Device,
     setUserAddress(userAddress:string) {

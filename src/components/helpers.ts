@@ -1,7 +1,5 @@
 import {blockchainConfig} from "../blockchainConfig";
 import {ChainInfo} from "@keplr-wallet/types";
-import {AminoConverters} from "@cosmjs/stargate";
-import {MsgSplitVesting} from "../../ts-client/chain4energy.c4echain.cfevesting/types/c4echain/cfevesting/tx";
 
 export const hexToBytes = (hex): Uint8Array => {
     let bytes = [];
