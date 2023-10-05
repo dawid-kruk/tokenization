@@ -4,6 +4,7 @@ import { SigningStargateClient} from "@cosmjs/stargate";
 import { createKeplrConfig} from "./helpers";
 import {registry} from "../../ts-client";
 import {UserStore} from "../services/user_store";
+import {SigningCosmWasmClient} from "@cosmjs/cosmwasm-stargate";
 
 const userAddress = ref("")
 
@@ -12,18 +13,17 @@ const denomination = 1000000;
 const connectWithKeplr = async () => {
     const chainInfo = createKeplrConfig();
     await window.keplr.experimentalSuggestChain(chainInfo);
-    await window.keplr.enable("c4echain");
-    const offlineSigner = window.keplr.getOfflineSigner("c4echain");
+    await window.keplr.enable(chainInfo.chainId);
+    const offlineSigner = window.keplr.getOfflineSigner(chainInfo.chainId);
     const accounts = await offlineSigner.getAccounts();
-    const client = await SigningStargateClient.connectWithSigner(
-        "localhost:26657",
+    const client = await SigningCosmWasmClient.connectWithSigner(
+        chainInfo.rpc,
         offlineSigner,
-        {registry}
     );
 
     UserStore.setUserAddress( accounts[0].address)
     UserStore.setUserClient(client)
-  userAddress.value = accounts[0].address
+    userAddress.value = accounts[0].address
 }
 
 </script>

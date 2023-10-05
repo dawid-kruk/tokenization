@@ -1,30 +1,25 @@
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
 import {UserStore} from "../services/user_store.js";
-import {confirmTransaction} from "./helpers";
-const userCertificates = ref([]);
+import {CertificateOffer} from "../ts/Sg721.types";
+const marketplaceCertificates = ref<CertificateOffer[]>([]);
 onMounted(async () => {
   try {
-    const certs = await UserStore.getAllMarketplaceCertificates();
-    userCertificates.value.push(...certs)
+    marketplaceCertificates.value.push(...await UserStore.client.marketplaceCertificates());
   } catch (error) {
     console.error("Error fetching devices:", error);
-    // Handle the error appropriately
   }
 });
 
 async function  buyCertificate(certificateId:number) {
-  const msgAddCertificateToMarketplace = {buyer: UserStore.userAddress, marketplaceCertificateId: certificateId,
-    certificateId: certificateId};
-  const x = txClient().msgBuyCertificate({value: msgAddCertificateToMarketplace});
-  await confirmTransaction(x);
+  const x = UserStore.client.buyCertificate({buyer: UserStore.userAddress, marketplaceCertificateId: certificateId})
 }
 </script>
 
 <template>
   <div>
-  <div v-if="userCertificates.length > 0" style="background: white; padding: 20px; margin-top: 15px">
-    <span v-for="cert in userCertificates">
+  <div v-if="marketplaceCertificates.length > 0" style="background: white; padding: 20px; margin-top: 15px">
+    <span v-for="cert in marketplaceCertificates">
     <div class="listing-div" v-if="cert.buyer === ''">
         <h3>Id: {{cert.id}}</h3>
         <h3>Owner address: {{cert.owner}}</h3>
@@ -40,7 +35,7 @@ async function  buyCertificate(certificateId:number) {
     </div>
     </span>
   </div>
-  <div v-if="userCertificates.length === 0">
+  <div v-if="marketplaceCertificates.length === 0">
     <h3>There are no certificates on the marketplace yet</h3>
   </div>
   </div>
