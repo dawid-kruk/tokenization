@@ -2,6 +2,8 @@
 import {onMounted, ref} from "vue";
 import {UserStore} from "../services/user_store.js";
 import {CertificateOffer} from "../ts/Sg721.types";
+import {getFees, handleTransaction} from "./helpers";
+import {coins} from "@cosmjs/amino";
 const marketplaceCertificates = ref<CertificateOffer[]>([]);
 onMounted(async () => {
   try {
@@ -12,8 +14,12 @@ onMounted(async () => {
   }
 });
 
-async function  buyCertificate(certificateId:number) {
-  const x = UserStore.client.buyCertificate({buyer: UserStore.userAddress, marketplaceCertificateId: certificateId})
+async function  buyCertificate(certificateId:number, price:number) {
+  const new_coins = coins(price, "uc4e")
+  console.log(new_coins)
+  await handleTransaction(() =>
+      UserStore.client.buyCertificate({marketplaceCertificateId: certificateId}, getFees(), "",
+          new_coins));
 }
 </script>
 
@@ -30,9 +36,9 @@ async function  buyCertificate(certificateId:number) {
         <span class="listing-div" v-for="measurement in cert.measurements">
           <h3>Measurement id: {{measurement.id}}</h3>
           <h3>Measurement value: {{measurement.reverse_power}}Wh</h3>
-          <h3>Measurement timestamp: {{measurement.timestamp}}</h3>
+          <h3>Measurement timestamp: {{new Date(measurement.timestamp * 1000).toLocaleString()}}</h3>
         </span>
-        <button @click="buyCertificate( cert.id)">Buy this certificate</button>
+        <button @click="buyCertificate(cert.id, cert.price)">Buy this certificate</button>
     </div>
     </span>
   </div>

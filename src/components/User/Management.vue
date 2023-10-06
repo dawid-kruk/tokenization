@@ -9,9 +9,11 @@ const devices = ref<Device[]>([]);
 onMounted(async () => {
   try {
     const userDevicesResponse = await UserStore.client.userDevices({owner: UserStore.userAddress});
+    console.log(userDevicesResponse)
     if (userDevicesResponse.user_devices.devices.length > 0) {
       for (const dev of userDevicesResponse.user_devices.devices) {
         const deviceResponse = await UserStore.client.device({deviceAddress: dev.device_address})
+        console.log(deviceResponse)
         const device = deviceResponse.device
         device.name = dev.name
         device.location = dev.location

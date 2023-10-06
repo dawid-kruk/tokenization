@@ -10,7 +10,7 @@ const assingDevice = async () => {
     alert("Enter user address")
     return
   }
-  await handleTransaction(() => UserStore.client.assignDeviceToUser({userAddress: UserStore.userAddress}, getFees()));
+  await handleTransaction(() => UserStore.client.assignDeviceToUser({userAddress: userAddress.value}, getFees()));
 }
 </script>
 

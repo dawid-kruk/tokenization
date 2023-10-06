@@ -6,7 +6,7 @@ export const blockchainConfig = {
   addressPrefix: "c4e",
   rpcUrl: "https://rpc-dev.c4e.io",
   restUrl: "https://lcd-dev.c4e.io",
-  contractAddress: "c4e1nc5tatafv6eyq7llkr2gv50ff9e22mnf70qgjlv737ktmt4eswrqt0gfu4",
+  contractAddress: "c4e1ghd753shjuwexxywmgs4xz7x2q732vcnkm6h2pyv9s6ah3hylvrq0zm44s",
   gasPrices: {
     average: 0.025,
     high: 0.03,
