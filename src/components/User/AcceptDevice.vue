@@ -13,9 +13,8 @@
 
 <script setup lang="ts">
 import {ref} from "vue";
-import {confirmTransaction, getFees, handleTransaction} from "../helpers";
-import { txClient} from "../../../ts-client/chain4energy.c4echain.cfetokenization";
 import {UserStore} from "../../services/user_store";
+import {getFees, handleTransaction} from "../helpers";
 const deviceAddress = ref("");
 const deviceName = ref("");
 const location = ref("");

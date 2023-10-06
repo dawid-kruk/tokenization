@@ -1,11 +1,7 @@
 <script setup lang="ts">
-
 import {UserStore} from "../../services/user_store";
 import {ref} from "vue";
-import {GlobalStore} from "../../services/global_store";
-
 const userDevice = ref(UserStore.device)
-console.log(userDevice.value.measurements)
 
 const calculateProgress = (measurement) => {
   if (measurement.fulfilled_active_power.length === 0) {
@@ -22,12 +18,12 @@ const calculateProgress = (measurement) => {
 <template>
   <span v-for="measurement in userDevice.measurements">
     <div class="listing-div energy-measurement" style="border: 2px solid black;">
-      <h3>Timestamp: {{new Date(measurement.timestamp).toLocaleString()}}</h3>
+      <h3>Timestamp: {{new Date(measurement.timestamp * 1000).toLocaleString()}}</h3>
       <h3>Energy consumed: {{measurement.active_power}}Wh</h3>
     <hr style="border: 1px solid black; width: 100%">
       <span v-for="fulfiledPower in measurement.fulfilled_active_power">
         <h3>
-          Fulfilled {{fulfiledPower.amount}}Wh using certificate with id {{fulfiledPower.certificateId}}
+          Fulfilled {{fulfiledPower.amount}}Wh using certificate with id {{fulfiledPower.certificate_id}}
         </h3>
       </span>
       <div class="progress-bar-wrapper">

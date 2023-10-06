@@ -12,9 +12,10 @@ onMounted(async () => {
     if (userDevicesResponse.user_devices.devices.length > 0) {
       for (const dev of userDevicesResponse.user_devices.devices) {
         const deviceResponse = await UserStore.client.device({deviceAddress: dev.device_address})
-        deviceResponse.name = dev.name
-        deviceResponse.location = dev.location
-        devices.value.push(deviceResponse)
+        const device = deviceResponse.device
+        device.name = dev.name
+        device.location = dev.location
+        devices.value.push(device)
       }
     }
 

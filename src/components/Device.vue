@@ -2,7 +2,6 @@
 import {ref} from "vue";
 import {UserStore} from "../services/user_store";
 import {getFees, handleTransaction} from "./helpers";
-
 const amount = ref("")
 const userAddress = ref("")
 

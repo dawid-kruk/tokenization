@@ -5,7 +5,8 @@ import {CertificateOffer} from "../ts/Sg721.types";
 const marketplaceCertificates = ref<CertificateOffer[]>([]);
 onMounted(async () => {
   try {
-    marketplaceCertificates.value.push(...await UserStore.client.marketplaceCertificates());
+    const marketplaceCertificatesResponse = await UserStore.client.marketplaceCertificates();
+    marketplaceCertificates.value.push(...marketplaceCertificatesResponse.marketplace_certificates);
   } catch (error) {
     console.error("Error fetching devices:", error);
   }
@@ -25,7 +26,7 @@ async function  buyCertificate(certificateId:number) {
         <h3>Owner address: {{cert.owner}}</h3>
         <h3>Authorizer: {{cert.authorizer}}</h3>
         <h3>Power: {{cert.power}}Wh</h3>
-        <h3>Price: {{cert.price[0].amount}}{{cert.price[0].denom}} ({{cert.price[0].amount / 1000000}}C4E)</h3>
+        <h3>Price: {{cert.price}}uc4e ({{cert.price / 1000000}}C4E)</h3>
         <span class="listing-div" v-for="measurement in cert.measurements">
           <h3>Measurement id: {{measurement.id}}</h3>
           <h3>Measurement value: {{measurement.reverse_power}}Wh</h3>

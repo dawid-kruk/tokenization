@@ -21,7 +21,7 @@
     <p>Specify which measurements to use</p>
     <span v-for="measurement in userDevice.measurements">
       <div v-if="!measurement.used_for_certificate" v-bind:class="[measurementsIds.findIndex(x => x === measurement.id) != -1 ? 'activeCertificateType' : '']" @click="measurementsIds.push(measurement.id)" class="listing-div" style="border: 2px solid black; cursor: pointer" >
-        <h3>Timestamp: {{new Date(measurement.timestamp).toLocaleString()}}</h3>
+        <h3>Timestamp: {{new Date(measurement.timestamp * 1000).toLocaleString()}}</h3>
         <h3>Energy produced: {{measurement.reverse_power}}Wh</h3>
       </div>
     </span>
@@ -34,9 +34,9 @@
 
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import { txClient} from "../../../ts-client/chain4energy.c4echain.cfetokenization";
 import {UserStore} from "../../services/user_store";
 import {CertificateType, CertificateTypeAllResponse} from "../../ts/Sg721.types";
+import {getFees, handleTransaction} from "../helpers";
 const userDevice = ref(UserStore.device)
 const power = ref();
 const certyficateTypeId = ref('0');
@@ -74,15 +74,14 @@ onMounted(async () => {
   }
 });
 const createUserCertificates = async () => {
-  const msgCreateUserCertificates = {
-    deviceAddress: UserStore.device.device_address,
-    allowedAuthorities: [...allowedAuthorities.value],
-    certyficateTypeId: +certyficateTypeId.value,
-    measurements: measurementsIds.value,
-  };
-
-  const x = txClient().msgCreateUserCertificates({value: msgCreateUserCertificates});
-  await confirmTransaction(x);
+  await handleTransaction(() => UserStore.client.createUserCertificates(
+      {
+        certificateTypeId:  +certyficateTypeId.value,
+        deviceAddress: UserStore.device.device_address,
+        allowedAuthorities: [...allowedAuthorities.value],
+        measurements: measurementsIds.value
+      }
+      , getFees()));
 }
 </script>
 
