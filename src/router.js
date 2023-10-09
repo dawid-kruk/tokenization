@@ -12,10 +12,10 @@ import Measurements from "./components/User/Measurements.vue";
 import EnergyRaport from "./components/User/EnergyRaport.vue";
 
 export const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory("/tokenization/"),
     routes: [
         {
-            path: '/',
+            path: '',
             component: MainPage,
             children: [
                 {
